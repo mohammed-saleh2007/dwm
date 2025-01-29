@@ -12,3 +12,5 @@ app launcher: dmenu
 terminal: st
 lock screen: slock 
 slock patches: showtime + background-image
+
+accent color: #a9a323
