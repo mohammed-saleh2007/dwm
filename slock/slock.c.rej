@@ -1,0 +1,36 @@
+--- slock.c
++++ slock.c
+@@ -19,7 +20,8 @@
+ #include <X11/keysym.h>
+ #include <X11/Xlib.h>
+ #include <X11/Xutil.h>
+-
++#include <pthread.h>
++#include <time.h>
+ #include "arg.h"
+ #include "util.h"
+ 
+@@ -234,16 +280,23 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
+ 			}
+ 			color = len ? INPUT : ((failure || failonclear) ? FAILED : INIT);
+ 			if (running && oldc != color) {
++		        pthread_mutex_lock(&mutex); /*Stop the time refresh thread from interfering*/
+ 				for (screen = 0; screen < nscreens; screen++) {
+ 					XSetWindowBackground(dpy,
+ 					                     locks[screen]->win,
+ 					                     locks[screen]->colors[color]);
+ 					XClearWindow(dpy, locks[screen]->win);
++                    time_t rawtime;
++                    time(&rawtime);
++	                refresh(dpy, locks[screen]->win,locks[screen]->screen, *localtime(&rawtime),crs[screen],surfaces[screen]);
++					/*Redraw the time after screen cleared*/
+ 				}
++				pthread_mutex_unlock(&mutex);
+ 				oldc = color;
+ 			}
+ 		} else if (rr->active && ev.type == rr->evbase + RRScreenChangeNotify) {
+ 			rre = (XRRScreenChangeNotifyEvent*)&ev;
++		    pthread_mutex_lock(&mutex); /*Stop the time refresh thread from interfering.*/
+ 			for (screen = 0; screen < nscreens; screen++) {
+ 				if (locks[screen]->win == rre->window) {
+ 					if (rre->rotation == RR_Rotate_90 ||

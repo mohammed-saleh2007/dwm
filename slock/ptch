@@ -1,0 +1,17 @@
+diff --git a/slock.c b/slock.c
+index 1234567..abcdef0 100644
+--- a/slock.c
++++ b/slock.c
+@@ -75,6 +75,8 @@
+ #include <linux/oom.h>
++#include <time.h>
++#include <pthread.h>
+
+ struct tm tm = *localtime(&rawtime);
+ 
+ time_t rawtime;
++time(&rawtime);  // Ensure rawtime is initialized
++struct tm tm = *localtime(&rawtime);
+ 
+ pthread_t threadid;
+ pthread_create(&threadid, NULL, displayTime, &displayData);

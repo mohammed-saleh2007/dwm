@@ -1,0 +1,23 @@
+super + c
+	chromium
+
+super + t
+	telegram-desktop
+
+super + f
+	thunar
+
+super + l
+	slock
+
+XF86AudioRaiseVolume
+	amixer -q set Master 5%+ unmute
+
+XF86AudioLowerVolume
+	amixer -q set Master 5%- unmute
+
+XF86AudioMute
+	amixer -q set Master toggle
+
+Print
+	scrot ~/Pictures/Screenshots/%Y-%m-%d-%T.png
